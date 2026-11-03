@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Voertuigenlogboek</title>
+<meta name="theme-color" content="#0b3d91">
+<meta name="color-scheme" content="light dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Logboek">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Scherm voor aanmelden of een melding over de installatie -->
+<div class="wrap" id="auth-view">
+  <header class="top">
+    <div>
+      <h1>Voertuigenlogboek</h1>
+      <p>Alle onderhoud en herstellingen per voertuig, op nummerplaat.</p>
+    </div>
+  </header>
+  <div class="empty auth-card" id="auth-card"><h3>Laden&hellip;</h3></div>
+</div>
+
+<!-- De eigenlijke app -->
+<div class="wrap" id="app-view" hidden>
+  <header class="top">
+    <div>
+      <h1>Voertuigenlogboek</h1>
+      <p>Alle onderhoud en herstellingen per voertuig, op nummerplaat.</p>
+    </div>
+    <div style="display:grid;gap:10px;justify-items:end;min-width:0">
+      <form id="search-form" class="search" autocomplete="off">
+        <label class="plate search-plate" for="plate-input" aria-label="Nummerplaat">
+          <span class="eu" aria-hidden="true">B</span>
+          <input id="plate-input" type="text" inputmode="text" maxlength="12" placeholder="1-ABC-123" spellcheck="false" autocapitalize="characters">
+        </label>
+        <button class="btn" type="submit">Toon historiek</button>
+      </form>
+      <div class="userbar">
+        <span>Aangemeld als <b id="user-name"></b></span>
+        <button class="link" id="refresh-btn" type="button">Vernieuwen</button>
+        <button class="link" id="export-btn" type="button">Exporteer naar Excel</button>
+        <button class="link" id="signout-btn" type="button">Afmelden</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="banner" class="banner" role="status" hidden></div>
+  <p id="status" class="status" role="status"></p>
+
+  <div class="main">
+    <aside class="form-card" id="form-card">
+      <h2>Interventie toevoegen</h2>
+      <p class="hint" id="form-hint">Zoek of voer eerst een nummerplaat in.</p>
+      <div class="for-plate" id="for-plate" hidden></div>
+      <form id="entry-form" class="entry-form" hidden>
+        <div class="row2">
+          <div class="field"><label for="f-date">Datum</label><input id="f-date" type="date" required></div>
+          <div class="field"><label for="f-type">Soort</label>
+            <select id="f-type">
+              <option>Onderhoud</option><option>Herstelling</option><option>Keuring</option><option>Overig</option>
+            </select>
+          </div>
+        </div>
+        <div class="field"><label for="f-desc">Wat is er gebeurd?</label><textarea id="f-desc" required placeholder="Bv. Oliefilter vervangen"></textarea></div>
+        <div class="field"><label for="f-part">Onderdeel of type (optioneel)</label><input id="f-part" type="text" placeholder="Bv. 12356abc"></div>
+        <div class="row2">
+          <div class="field"><label for="f-who">Uitgevoerd door</label><input id="f-who" type="text" required placeholder="Bv. Bart"></div>
+          <div class="field"><label for="f-km">Kilometerstand (optioneel)</label><input id="f-km" type="number" min="0" step="1" inputmode="numeric"></div>
+        </div>
+        <div class="field" id="label-field" hidden><label for="f-label">Voertuig (optioneel)</label><input id="f-label" type="text" placeholder="Bv. Renault Master, bestelwagen"></div>
+        <button class="btn" id="save-btn" type="submit">Interventie opslaan</button>
+        <p class="status" id="form-status" role="status"></p>
+      </form>
+    </aside>
+
+    <section class="list-area" id="list-area" aria-live="polite"></section>
+  </div>
+</div>
+
+<script src="vendor/msal-browser.min.js"></script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="config.js"></script>
+<script src="graph.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

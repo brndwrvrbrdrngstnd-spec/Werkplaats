@@ -1,0 +1,155 @@
+/* Layout: zoekbalk in de vorm van een Belgische nummerplaat bovenaan; daaronder links de historiek van het voertuig, rechts het invulformulier. */
+:root {
+  --bg: #eceff1;
+  --surface: #ffffff;
+  --surface-2: #f5f7f8;
+  --ink: #14212b;
+  --muted: #5b6b77;
+  --line: #d3dade;
+  --accent: #0b3d91;
+  --accent-ink: #ffffff;
+  --danger: #b42318;
+  --plate-bg: #ffffff;
+  --plate-red: #c8102e;
+  --plate-eu: #0b3d91;
+  --plate-edge: #14212b;
+  --t1-bg: #dbe7fb; --t1-fg: #0b3d91;
+  --t2-bg: #fde6cf; --t2-fg: #8a3f00;
+  --t3-bg: #d9f0e1; --t3-fg: #14572f;
+  --t4-bg: #e3e8eb; --t4-fg: #43525d;
+  --font-display: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f171d; --surface: #17222a; --surface-2: #1d2a33; --ink: #e8eef2; --muted: #9aabb7; --line: #2a3944;
+    --accent: #7aa9ff; --accent-ink: #0b1a33; --danger: #ff8f85;
+    --t1-bg: #1d3359; --t1-fg: #a9c7ff;
+    --t2-bg: #4a2e12; --t2-fg: #ffc99a;
+    --t3-bg: #17402a; --t3-fg: #9fe0b8;
+    --t4-bg: #26333c; --t4-fg: #b5c3cd;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f171d; --surface: #17222a; --surface-2: #1d2a33; --ink: #e8eef2; --muted: #9aabb7; --line: #2a3944;
+  --accent: #7aa9ff; --accent-ink: #0b1a33; --danger: #ff8f85;
+  --t1-bg: #1d3359; --t1-fg: #a9c7ff;
+  --t2-bg: #4a2e12; --t2-fg: #ffc99a;
+  --t3-bg: #17402a; --t3-fg: #9fe0b8;
+  --t4-bg: #26333c; --t4-fg: #b5c3cd;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  padding-block: 24px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1080px; margin: 0 auto; display: grid; gap: 24px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing: .01em; margin: 0; text-wrap: balance; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* Kop en zoekbalk */
+.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px 32px; }
+.top h1 { font-size: clamp(2rem, 5vw, 2.75rem); line-height: 1; text-transform: uppercase; }
+.top p { margin: 6px 0 0; color: var(--muted); max-width: 36ch; }
+.search { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.plate { display: inline-flex; align-items: stretch; background: var(--plate-bg); border: 2px solid var(--plate-edge); border-radius: 7px; overflow: hidden; font-family: var(--font-display); font-weight: 600; line-height: 1; font-size: var(--ps, 30px); }
+.plate .eu { background: var(--plate-eu); color: #fff; font-size: .38em; padding: .5em .55em .45em; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; letter-spacing: .05em; }
+.plate .eu::before { content: "\2605"; font-size: 1.05em; color: #f7d117; margin-bottom: .35em; }
+.plate .chars { color: var(--plate-red); padding: .16em .42em .12em; letter-spacing: .06em; white-space: nowrap; }
+.plate input { border: 0; background: transparent; color: var(--plate-red); font: inherit; letter-spacing: .06em; text-transform: uppercase; width: 5.6em; padding: .16em .3em .12em .42em; min-width: 0; }
+.plate input::placeholder { color: #dba7af; }
+.plate.search-plate { --ps: 34px; }
+.plate.search-plate:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
+.plate input:focus-visible { outline: none; }
+.btn { border: 0; border-radius: 6px; padding: 10px 16px; font-weight: 600; background: var(--accent); color: var(--accent-ink); }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn:disabled { opacity: .55; cursor: default; }
+
+.status { margin: 0; color: var(--muted); font-size: .9rem; min-height: 1.35em; }
+.status.err { color: var(--danger); }
+
+/* Hoofdindeling */
+.main { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); grid-template-areas: "form" "list"; }
+@media (min-width: 900px) {
+  .main { grid-template-columns: minmax(0, 1fr) 340px; grid-template-areas: "list form"; align-items: start; }
+  .form-card { position: sticky; top: 16px; }
+}
+.list-area { grid-area: list; min-width: 0; display: grid; gap: 16px; }
+.form-card { grid-area: form; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 14px; min-width: 0; }
+.form-card h2 { font-size: 1.5rem; }
+.form-card .for-plate { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--muted); font-size: .9rem; }
+.form-card .hint { margin: 0; color: var(--muted); }
+form.entry-form { display: grid; gap: 12px; }
+.field { display: grid; gap: 4px; min-width: 0; }
+.field label { font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.field input, .field select, .field textarea { width: 100%; background: var(--surface-2); border: 1px solid var(--line); border-radius: 6px; padding: 9px 10px; }
+.field textarea { min-height: 76px; resize: vertical; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 420px) { .row2 { grid-template-columns: 1fr; } }
+
+/* Voertuigoverzicht */
+.known { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.known button { width: 100%; text-align: left; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px 16px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.known button:hover { border-color: var(--accent); }
+.known .lbl { min-width: 0; overflow-wrap: anywhere; }
+.known .lbl small { display: block; color: var(--muted); }
+.known .cnt { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; white-space: nowrap; }
+@media (max-width: 520px) { .known button { grid-template-columns: 1fr auto; } .known button .plate { grid-column: 1 / -1; justify-self: start; } }
+.empty { background: var(--surface); border: 1px dashed var(--line); border-radius: 10px; padding: 28px 20px; display: grid; gap: 8px; justify-items: start; }
+.empty h3 { font-size: 1.4rem; }
+.empty p { margin: 0; color: var(--muted); max-width: 52ch; }
+
+/* Voertuigkop en historiek */
+.vehicle-head { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; justify-content: space-between; }
+.vehicle-head .who { display: grid; gap: 4px; min-width: 0; }
+.vehicle-head .who span { color: var(--muted); overflow-wrap: anywhere; }
+.stats { display: flex; gap: 24px; flex-wrap: wrap; }
+.stats div { display: grid; }
+.stats b { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stats span { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: .88rem; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.timeline { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.entry { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr) auto; gap: 8px 18px; padding: 16px 18px; align-items: start; }
+.entry + .entry { border-top: 1px solid var(--line); }
+.entry .when { display: grid; gap: 6px; justify-items: start; }
+.entry .date { font-family: var(--font-display); font-weight: 600; font-size: 1.35rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.pill { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.pill.t1 { background: var(--t1-bg); color: var(--t1-fg); }
+.pill.t2 { background: var(--t2-bg); color: var(--t2-fg); }
+.pill.t3 { background: var(--t3-bg); color: var(--t3-fg); }
+.pill.t4 { background: var(--t4-bg); color: var(--t4-fg); }
+.entry .body { min-width: 0; display: grid; gap: 4px; }
+.entry .desc { margin: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
+.entry .part { margin: 0; font-size: .9rem; }
+.entry .part code { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; background: var(--surface-2); border: 1px solid var(--line); border-radius: 4px; padding: 0 6px; overflow-wrap: anywhere; }
+.entry .meta { margin: 0; color: var(--muted); font-size: .88rem; font-variant-numeric: tabular-nums; }
+.entry .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.link { background: none; border: 0; padding: 4px 6px; color: var(--muted); font-size: .85rem; text-decoration: underline; }
+.link.danger { color: var(--danger); }
+@media (max-width: 600px) {
+  .entry { grid-template-columns: 1fr; }
+  .entry .when { grid-template-columns: auto auto; align-items: center; gap: 12px; }
+  .entry .acts { justify-content: flex-start; }
+}
+.none { padding: 24px 18px; color: var(--muted); margin: 0; }
+
+/* Toevoegingen voor de zelfstandige app */
+html, body { min-height: 100%; }
+.userbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--muted); font-size: .88rem; justify-content: flex-end; }
+.userbar b { color: var(--ink); font-weight: 600; overflow-wrap: anywhere; }
+.banner { background: var(--t2-bg); color: var(--t2-fg); border-radius: 8px; padding: 10px 14px; font-weight: 500; }
+.auth-card { max-width: 560px; }
+.auth-card .btn { margin-top: 4px; }
+.btn, .chip, .link, .known button { min-height: 44px; }
+.link { min-height: 36px; }
+.field input, .field select, .field textarea { font-size: 16px; min-height: 44px; }
+@media (display-mode: standalone) { body { padding-top: max(24px, env(safe-area-inset-top, 0px)); } }

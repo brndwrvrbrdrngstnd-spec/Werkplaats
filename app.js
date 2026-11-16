@@ -22,12 +22,35 @@
 
   /* ---------- Hulpfuncties ---------- */
   function norm(s) { return String(s || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); }
+  // Zet een streepje op elke overgang tussen cijfer en letter: 1ABC123 wordt 1-ABC-123, ABC123 wordt ABC-123.
   function fmt(p) {
-    var m = /^(\d)([A-Z]{3})(\d{3})$/.exec(p);
-    if (m) return m[1] + "-" + m[2] + "-" + m[3];
-    m = /^([A-Z]{3})(\d{3})$/.exec(p);
-    if (m) return m[1] + "-" + m[2];
-    return p;
+    return String(p || "").replace(/(\d)(?=[A-Z])|([A-Z])(?=\d)/g, function (m) { return m + "-"; });
+  }
+  function plateLive(v) { return fmt(norm(v).slice(0, 8)); }
+  // Kilometerstand met punt als duizendtalscheiding; letters zoals "kms" worden genegeerd.
+  function kmLive(v) {
+    var d = String(v || "").replace(/\D/g, "").replace(/^0+(?=\d)/, "").slice(0, 7);
+    return d.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+  function kmValue(v) {
+    var d = String(v || "").replace(/\D/g, "");
+    return d === "" ? null : Number(d);
+  }
+  function isAlnum(c) { return /[A-Za-z0-9]/.test(c); }
+  function isDigit(c) { return /[0-9]/.test(c); }
+  // Maakt de tekst in een invoerveld op terwijl je typt en houdt de cursor bij hetzelfde teken.
+  function reformat(input, fn, isSig) {
+    var v = input.value;
+    var pos = input.selectionStart;
+    if (pos === null || pos === undefined) pos = v.length;
+    var sig = 0, i;
+    for (i = 0; i < pos; i++) if (isSig(v.charAt(i))) sig++;
+    var out = fn(v);
+    if (out === v) return;
+    input.value = out;
+    var np = 0, seen = 0;
+    while (np < out.length && seen < sig) { if (isSig(out.charAt(np))) seen++; np++; }
+    try { input.setSelectionRange(np, np); } catch (e) { /* niet elk veldtype ondersteunt dit */ }
   }
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -248,6 +271,7 @@
     setInterval(function () { if (document.visibilityState === "visible" && !saving) refresh(); }, POLL_MS);
 
     $("#plate-input").addEventListener("input", function (e) {
+      reformat(e.target, plateLive, isAlnum);
       if (plate) { plate = ""; if (location.hash) history.replaceState(null, "", location.pathname + location.search); }
       query = e.target.value;
       render();
@@ -291,6 +315,7 @@
     f.date.value = today();
     var savedWho = store("vl-who");
     if (savedWho) f.who.value = savedWho;
+    f.km.addEventListener("input", function () { reformat(f.km, kmLive, isDigit); });
 
     $("#entry-form").addEventListener("submit", async function (e) {
       e.preventDefault();
@@ -302,7 +327,7 @@
       var rec = {
         plate: plate, date: f.date.value, type: f.type.value, description: desc,
         part: f.part.value.trim(), doneBy: who,
-        km: f.km.value === "" ? null : Number(f.km.value),
+        km: kmValue(f.km.value),
         vehicle: labels[plate] ? "" : f.label.value.trim()
       };
       saving = true;

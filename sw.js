@@ -1,6 +1,6 @@
 /* Service worker: houdt de app-bestanden beschikbaar zonder verbinding.
    Gegevens uit de database worden nooit gecachet; die gaan altijd rechtstreeks naar Supabase. */
-var CACHE = "voertuigenlogboek-v2";
+var CACHE = "voertuigenlogboek-v3";
 var SHELL = [
   "./",
   "index.html",
@@ -34,7 +34,7 @@ self.addEventListener("fetch", function (e) {
   var url = new URL(req.url);
   if (req.method !== "GET" || url.origin !== self.location.origin) return;
   e.respondWith(
-    fetch(req).then(function (res) {
+    fetch(req, { cache: "no-cache" }).then(function (res) {
       if (res && res.ok) {
         var copy = res.clone();
         caches.open(CACHE).then(function (c) { c.put(req, copy); });

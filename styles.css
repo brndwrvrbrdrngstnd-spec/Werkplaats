@@ -162,3 +162,16 @@ img { max-width: 100%; }
 
 /* Op smalle schermen eerst de historiek, daarna het formulier */
 @media (max-width: 899px) { .main { grid-template-areas: "list" "form"; } }
+
+/* Nummerplaat zoals op een Belgische plaat: blauwe strook met cirkel van twaalf gele sterren en een witte B */
+:root { --plate-eu: #003399; }
+.plate .eu { justify-content: center; gap: .25em; padding: .4em .45em .4em; font-size: .36em; font-weight: 600; line-height: 1; letter-spacing: 0; }
+.plate .eu::before { content: ""; display: block; width: 2.5em; height: 2.5em; margin: 0; font-size: inherit; color: inherit; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='%23ffcc00'%3E%3Cpolygon points='12.00,1.50 12.50,2.91 14.00,2.95 12.81,3.86 13.23,5.30 12.00,4.45 10.77,5.30 11.19,3.86 10.00,2.95 11.50,2.91'/%3E%3Cpolygon points='16.20,2.63 16.70,4.04 18.20,4.08 17.01,4.99 17.43,6.42 16.20,5.58 14.97,6.42 15.39,4.99 14.20,4.08 15.70,4.04'/%3E%3Cpolygon points='19.27,5.70 19.77,7.11 21.27,7.15 20.08,8.06 20.51,9.50 19.27,8.65 18.04,9.50 18.47,8.06 17.28,7.15 18.77,7.11'/%3E%3Cpolygon points='20.40,9.90 20.90,11.31 22.40,11.35 21.21,12.26 21.63,13.70 20.40,12.85 19.17,13.70 19.59,12.26 18.40,11.35 19.90,11.31'/%3E%3Cpolygon points='19.27,14.10 19.77,15.51 21.27,15.55 20.08,16.46 20.51,17.90 19.27,17.05 18.04,17.90 18.47,16.46 17.28,15.55 18.77,15.51'/%3E%3Cpolygon points='16.20,17.17 16.70,18.59 18.20,18.63 17.01,19.54 17.43,20.97 16.20,20.12 14.97,20.97 15.39,19.54 14.20,18.63 15.70,18.59'/%3E%3Cpolygon points='12.00,18.30 12.50,19.71 14.00,19.75 12.81,20.66 13.23,22.10 12.00,21.25 10.77,22.10 11.19,20.66 10.00,19.75 11.50,19.71'/%3E%3Cpolygon points='7.80,17.17 8.30,18.59 9.80,18.63 8.61,19.54 9.03,20.97 7.80,20.12 6.57,20.97 6.99,19.54 5.80,18.63 7.30,18.59'/%3E%3Cpolygon points='4.73,14.10 5.23,15.51 6.72,15.55 5.53,16.46 5.96,17.90 4.73,17.05 3.49,17.90 3.92,16.46 2.73,15.55 4.23,15.51'/%3E%3Cpolygon points='3.60,9.90 4.10,11.31 5.60,11.35 4.41,12.26 4.83,13.70 3.60,12.85 2.37,13.70 2.79,12.26 1.60,11.35 3.10,11.31'/%3E%3Cpolygon points='4.73,5.70 5.23,7.11 6.72,7.15 5.53,8.06 5.96,9.50 4.73,8.65 3.49,9.50 3.92,8.06 2.73,7.15 4.23,7.11'/%3E%3Cpolygon points='7.80,2.63 8.30,4.04 9.80,4.08 8.61,4.99 9.03,6.42 7.80,5.58 6.57,6.42 6.99,4.99 5.80,4.08 7.30,4.04'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat; }
+
+/* De plaat in de voertuigkop houdt zijn eigen kleuren (rood en wit), niet het grijs van de omschrijving */
+.vehicle-head .who .plate .chars { color: var(--plate-red); }
+.vehicle-head .who .plate .eu { color: #fff; }
+
+/* Formulier: datumveld mag krimpen en velden op één rij staan op dezelfde hoogte */
+.field input[type="date"] { min-width: 0; max-width: 100%; }
+.row2 { align-items: end; }
